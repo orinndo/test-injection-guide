@@ -1,227 +1,105 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="ja">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>テスト注入（Test Injection）音声ガイド</title>
 <style>
-  :root {
-    --border:#d9d9d9;
-    --muted:#666;
-    --btn:#eef3ff;
-    --btn2:#f3f3f3;
-  }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Segoe UI", sans-serif;
-    margin: 18px;
-    line-height: 1.6;
-    background: #fff;
-    color: #111;
-  }
-  h1 {
-    margin: 0 0 6px;
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: .2px;
-  }
-  .note {
-    margin: 0 0 14px;
-    color: var(--muted);
-    font-size: 14px;
-  }
-  .panel {
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    max-width: 980px;
-    background: #fff;
-    box-shadow: 0 1px 0 rgba(0,0,0,.02);
-  }
-  .chip {
-    display:inline-block;
-    background:#f5f5f5;
-    color:#333;
-    border:1px solid #ededed;
-    border-radius: 999px;
-    padding: 8px 12px;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-  .row {
-    display:flex;
-    gap:10px;
-    align-items:center;
-    flex-wrap:wrap;
-  }
-  select {
-    flex: 1 1 520px;
-    padding: 10px 12px;
-    font-size: 16px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: #fff;
-  }
-  .navbtn {
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: #fff;
-    font-size: 14px;
-  }
-  .navbtn:disabled { opacity: .45; }
-  .sectionlabel {
-    margin-top: 14px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .jp {
-    margin-top: 6px;
-    font-size: 22px;
-    font-weight: 700;
-  }
-  .en {
-    margin-top: 6px;
-    font-size: 18px;
-  }
-  .controls {
-    margin-top: 10px;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .btn {
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 12px 16px;
-    background: #fff;
-    font-size: 15px;
-    min-width: 160px;
-  }
-  .btn.primary {
-    background: var(--btn);
-    border-color: #d7e4ff;
-  }
-  .btn.gray { background: var(--btn2); }
-  .status {
-    margin-top: 10px;
-    font-size: 14px;
-    color: var(--muted);
-  }
-  audio { margin-top: 10px; width: 100%; }
-  .foot { margin-top: 8px; color: var(--muted); font-size: 13px; }
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Segoe UI",sans-serif;
+background:linear-gradient(180deg,#f7fbff,#eef6ff);color:#0f172a;}
+.header{padding:18px 16px 10px;}
+.frame-title{border:2px solid #38bdf8;padding:14px 16px;border-radius:14px;background:#f8fcff;text-align:center;}
+.frame-title h1{margin:0;font-size:20px;}
+.frame-title p{margin:6px 0 0;font-size:14px;color:#475569;}
+.note{font-size:12px;color:#475569;margin:12px 16px;}
+.main{margin:0 16px 24px;padding:16px;background:#fff;border-radius:18px;box-shadow:0 8px 18px rgba(15,23,42,.08);}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+select{flex:1;max-width:100%;font-size:16px;padding:10px 36px 10px 12px;border-radius:12px;border:1px solid #cbd5f5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+button{font-size:15px;padding:10px 14px;border-radius:12px;border:1px solid #cbd5f5;background:#eff6ff;}
+button:active{transform:scale(.98);}
+.label{margin-top:14px;font-size:13px;color:#475569;}
+.jp{font-size:18px;font-weight:600;margin-top:6px;}
+.en{font-size:16px;margin-top:4px;}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+audio{width:100%;margin-top:10px;}
+.status{margin-top:8px;font-size:13px;color:#475569;}
+.hint{margin-top:10px;font-size:12px;color:#64748b;}
 </style>
 </head>
 <body>
-  <h1>テスト注入（Test Injection） 音声ガイド</h1>
-  <p class="note">※必ず GitHub Pages（https://○○.github.io/...）のURLで開いてください。iPhoneでは自動再生できないため、下の再生ボタンを押してください。</p>
-
-  <div class="panel">
-    <div class="chip">ステップ選択</div>
-
-    <div class="row">
-      <select id="stepSelect" aria-label="ステップ選択"></select>
-      <button class="navbtn" id="prevBtn" type="button">← 前</button>
-      <button class="navbtn" id="nextBtn" type="button">次 →</button>
-    </div>
-
-    <div class="sectionlabel">日本語（内容）</div>
-    <div id="jp" class="jp">—</div>
-
-    <div class="sectionlabel">English（Script）</div>
-    <div id="en" class="en">—</div>
-
-    <div class="controls">
-      <button class="btn primary" id="playBtn" type="button">▶ 再生 / Play</button>
-      <button class="btn gray" id="pauseBtn" type="button">⏸ 一時停止 / Pause</button>
-      <button class="btn" id="replayBtn" type="button">↺ もう一度 / Replay</button>
-    </div>
-
-    <div class="status" id="status">待機中 / Ready</div>
-    <audio id="audio" controls preload="none"></audio>
-    <div class="foot">再生されない場合は、下のコントロール（▶）からも再生できます。</div>
+<div class="header">
+<div class="frame-title">
+<h1>テスト注入（Test Injection）</h1>
+<p>English Audio Guide</p>
+</div>
+</div>
+<p class="note">※ iPhone / iPad / Android で再生できます。最初は「再生」を押してください。</p>
+<div class="main">
+<div class="row">
+<select id="sel"></select>
+<button id="prev">← 前</button>
+<button id="next">次 →</button>
+</div>
+<div class="label">日本語（内容）</div>
+<div class="jp" id="jp"></div>
+<div class="label">English (Script)</div>
+<div class="en" id="en"></div>
+<div class="controls">
+<button id="play">▶︎ 再生</button>
+<button id="pause">⏸ 一時停止</button>
+<button id="replay">↻ もう一度</button>
+</div>
+<div class="status" id="status">待機中 / Ready</div>
+<audio controls="" id="player"></audio>
+<div class="hint">
+    再生できない場合：消音モード解除、音量、Bluetooth接続を確認してください。
   </div>
-
+</div>
 <script>
-const STEPS = [{"num": "01", "title_jp": "両腕を頭の上に上げてください。", "jp": "両腕を頭の上に上げてください。", "en": "Please raise your arms above your head."}, {"num": "02", "title_jp": "右腕は肘を曲げずにまっすぐにしてください。", "jp": "右腕は肘を曲げずに、できるだけまっすぐにしてください。", "en": "Please try to keep your right arm straight without bending the elbow."}, {"num": "03", "title_jp": "左腕は肘を曲げずにまっすぐにしてください。", "jp": "左腕は肘を曲げずに、できるだけまっすぐにしてください。", "en": "Please try to keep your left arm straight without bending the elbow."}, {"num": "04", "title_jp": "本番と同じ速さでテスト注入をします。", "jp": "問題がないか確認するため、本番の造影剤注入と同じ速さでテスト注入を行います。", "en": "Just to make sure everything’s okay, we’re going to do a test injection at the same speed as the actual contrast dye injection."}, {"num": "05", "title_jp": "痛かったら教えてください。", "jp": "痛みがあれば、すぐに教えてください。", "en": "Please let me know if it hurts."}, {"num": "06", "title_jp": "これからテスト注入を始めます。", "jp": "これからテスト注入を始めます。", "en": "We’re starting the test injection now."}, {"num": "07", "title_jp": "痛みはありましたか？", "jp": "痛みはありましたか？", "en": "Did you feel any pain?"}, {"num": "08", "title_jp": "これから本番の注入を始めます。", "jp": "それでは、これから本番の注入を始めます。", "en": "We’ll start the actual injection."}];
+const STEPS = [
+ {preview:"両腕を頭の上に上げてください。", jp:"両腕を頭の上に上げてください。", en:"Please raise your arms above your head."},
+ {preview:"右腕を曲げずに、できるだけまっすぐ伸ばしていてください。", jp:"右腕を曲げずに、できるだけまっすぐ伸ばしていてください。", en:"Please try to keep your right arm straight without bending the elbow."},
+ {preview:"左腕を曲げずに、できるだけまっすぐ伸ばしていてください。", jp:"左腕を曲げずに、できるだけまっすぐ伸ばしていてください。", en:"Please try to keep your left arm straight without bending the elbow."},
+ {preview:"安全確認のために、本番と同じ速度で生理食塩水を流してテスト注入をします。", jp:"安全確認のために、本番と同じ速度で生理食塩水を流してテスト注入をします。", en:"Just to make sure everything’s okay, we’re going to do a test injection using saline at the same speed as the actual contrast dye injection."},
+ {preview:"痛みがあれば、すぐ教えてください。", jp:"痛みがあれば、すぐ教えてください。", en:"Please let me know if it hurts."},
+ {preview:"今からテスト注入を始めます。", jp:"今からテスト注入を始めます。", en:"We’re starting the test injection now."},
+ {preview:"痛みはありましたか？", jp:"痛みはありましたか？", en:"Did you feel any pain?"},
+ {preview:"それでは本番の注入を開始します。", jp:"それでは本番の注入を開始します。", en:"We’ll start the actual injection."},
+];
 
-let currentIndex = 0;
-const sel = document.getElementById('stepSelect');
-const jp = document.getElementById('jp');
-const en = document.getElementById('en');
-const audio = document.getElementById('audio');
-const statusEl = document.getElementById('status');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
+const sel=document.getElementById('sel'),
+jp=document.getElementById('jp'),
+en=document.getElementById('en'),
+player=document.getElementById('player'),
+status=document.getElementById('status');
 
-function setStatus(t) {
-  statusEl.textContent = t;
-}
-
-function buildSelect() {
-  sel.innerHTML = '';
-  STEPS.forEach((s, i) => {
-    const opt = document.createElement('option');
-    opt.value = String(i);
-    opt.textContent = `${s.num}. ${s.title_jp}`;
-    sel.appendChild(opt);
-  });
-}
-
-function updateNavButtons() {
-  prevBtn.disabled = (currentIndex === 0);
-  nextBtn.disabled = (currentIndex === STEPS.length - 1);
-}
-
-function loadStep(i) {
-  currentIndex = i;
-  sel.value = String(i);
-  jp.textContent = STEPS[i].jp;
-  en.textContent = STEPS[i].en;
-
-  const num = STEPS[i].num;
-  audio.pause();
-  audio.innerHTML = '';
-
-  // MP3 first for Android, then M4A for iPhone/Safari
-  const s1 = document.createElement('source');
-  s1.src = `audio/${num}.mp3`;
-  s1.type = 'audio/mpeg';
-  const s2 = document.createElement('source');
-  s2.src = `audio/${num}.m4a`;
-  s2.type = 'audio/mp4';
-
-  audio.appendChild(s1);
-  audio.appendChild(s2);
-  audio.load();
-
-  setStatus('待機中 / Ready');
-  updateNavButtons();
-}
-
-document.getElementById('playBtn').addEventListener('click', () => {
-  audio.play().then(()=>setStatus('再生中 / Playing')).catch(()=>setStatus('再生ボタンをもう一度押してください / Tap Play again'));
-});
-document.getElementById('pauseBtn').addEventListener('click', () => {
-  audio.pause();
-  setStatus('一時停止 / Paused');
-});
-document.getElementById('replayBtn').addEventListener('click', () => {
-  audio.currentTime = 0;
-  audio.play().then(()=>setStatus('再生中 / Playing')).catch(()=>setStatus('再生ボタンをもう一度押してください / Tap Play again'));
+STEPS.forEach((s,i)=>{
+ const o=document.createElement('option');
+ o.value=i;
+ o.textContent=`${String(i+1).padStart(2,'0')}｜${s.jp}`;
+ sel.appendChild(o);
 });
 
-sel.addEventListener('change', (e) => loadStep(Number(e.target.value)));
-prevBtn.addEventListener('click', () => { if (currentIndex > 0) loadStep(currentIndex - 1); });
-nextBtn.addEventListener('click', () => { if (currentIndex < STEPS.length - 1) loadStep(currentIndex + 1); });
-
-audio.addEventListener('ended', () => setStatus('完了 / Done'));
-audio.addEventListener('play', () => setStatus('再生中 / Playing'));
-audio.addEventListener('pause', () => {
-  if (audio.currentTime > 0 && audio.currentTime < (audio.duration || 9999)) setStatus('一時停止 / Paused');
-});
-
-buildSelect();
-loadStep(0);
+let idx=0;
+function load(i){
+ idx=Math.max(0,Math.min(STEPS.length-1,i));
+ sel.value=idx;
+ jp.textContent=STEPS[idx].jp;
+ en.textContent=STEPS[idx].en;
+ player.src=`audio/step_${String(idx+1).padStart(2,'0')}.m4a`;
+ status.textContent="待機中 / Ready";
+}
+sel.onchange=()=>load(parseInt(sel.value));
+document.getElementById('prev').onclick=()=>load(idx-1);
+document.getElementById('next').onclick=()=>load(idx+1);
+document.getElementById('play').onclick=()=>player.play();
+document.getElementById('pause').onclick=()=>player.pause();
+document.getElementById('replay').onclick=()=>{player.currentTime=0;player.play();}
+player.onplay=()=>status.textContent="再生中 / Playing";
+player.onpause=()=>status.textContent="一時停止 / Paused";
+player.onended=()=>status.textContent="待機中 / Ready";
+load(0);
 </script>
 </body>
 </html>
