@@ -25,6 +25,28 @@ button:active{transform:scale(.98);}
 audio{width:100%;margin-top:10px;}
 .status{margin-top:8px;font-size:13px;color:#475569;}
 .hint{margin-top:10px;font-size:12px;color:#64748b;}
+
+/* === Pain Modal (implant-device style sheet) === */
+.fab-pain{position:fixed;left:16px;bottom:16px;z-index:10000;
+background:#f8fcff;border:2px solid #38bdf8;color:#0f172a;
+border-radius:14px;padding:12px 14px;font-weight:800}
+.pain-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);
+z-index:9998;display:none}
+.pain-sheet{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+display:none;padding:12px 12px 18px}
+.pain-panel{max-width:860px;margin:0 auto;background:#fff;
+border-radius:20px;padding:12px 12px 14px;box-shadow:0 18px 40px rgba(15,23,42,.25)}
+.pain-list{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow:auto;padding:4px}
+.pain-item{border:1px solid #e2e8f0;border-radius:16px;padding:12px 12px;background:#ffffff}
+.pain-item:active{transform:scale(.99)}
+.pain-item.is-active{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.18)}
+.pain-jp{font-weight:800;font-size:16px;line-height:1.25}
+.pain-en{font-size:13px;color:#475569;margin-top:4px;line-height:1.25}
+.pain-audio{margin-top:12px}
+.pain-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px}
+.pain-close{background:#eff6ff;border:1px solid #cbd5f5;border-radius:14px;padding:10px 14px;font-size:15px}
+.pain-title{font-size:12px;color:#64748b;margin:0 0 8px 6px}
+
 </style>
 </head>
 <body>
@@ -100,6 +122,86 @@ player.onplay=()=>status.textContent="再生中 / Playing";
 player.onpause=()=>status.textContent="一時停止 / Paused";
 player.onended=()=>status.textContent="待機中 / Ready";
 load(0);
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const PAIN=[
+    {jp:'痛みを感じたとのことなので、テスト注入を一度中止します。',
+     en:"We’ll stop the test injection for now, because you felt some pain.",
+     a:'audio/pain_01_stop.m4a'},
+    {jp:'どのあたりが痛みますか？今、針を刺している場所ですか？',
+     en:"Where does it hurt? Is it around the injection site?",
+     a:'audio/pain_02_where.m4a'},
+    {jp:'その痛みは、少し我慢できそうですか？',
+     en:"Is the pain something you think you can tolerate?",
+     a:'audio/pain_03_tolerate.m4a'},
+    {jp:'血管の外に漏れていないかを確認しますので、少しの間、動かずにいてください。',
+     en:"We’re going to check for any leakage from the vein, so please stay still for a moment.",
+     a:'audio/pain_04_stay_still.m4a'},
+    {jp:'血管からの漏れは確認されませんでした。針は正しい位置に入っているようです。',
+     en:"There’s no sign of leakage from the vein, so it looks like the needle is in the correct position.",
+     a:'audio/pain_05_no_leak.m4a'},
+    {jp:'注入速度を少し落として注入を続けます。痛みは少し続くかもしれませんが、できる範囲で頑張って耐えていただけると助かります。もし痛みが強くなったら、すぐに教えてくださいね。',
+     en:"We’ll continue at a slower injection speed. You may feel some discomfort, but if you can tolerate it, we’d really appreciate your cooperation. Please let us know right away if the pain gets worse.",
+     a:'audio/pain_06_continue_slow.m4a'},
+    {jp:'血管からの漏れがありました。この部位は造影剤の注入には使いません。別の場所に新しく点滴を取らせていただきますね。',
+     en:"There was some leakage from the vein. We won’t use this site for the contrast injection, so we’ll place a new IV line in a different spot.",
+     a:'audio/pain_07_leak.m4a'}
+  ];
+
+  const open=document.getElementById('painOpen');
+  const back=document.getElementById('painBackdrop');
+  const sheet=document.getElementById('painSheet');
+  const list=document.getElementById('painList');
+  const player=document.getElementById('painPlayer');
+  const close=document.getElementById('painClose');
+
+  if(!open || !back || !sheet || !list || !player || !close) return;
+
+  const show=()=>{back.style.display='block';sheet.style.display='block';open.style.display='none';};
+  const hide=()=>{back.style.display='none';sheet.style.display='none';open.style.display='';};
+
+  PAIN.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='pain-item';
+    d.innerHTML=`<div class="pain-jp">${i+1}. ${s.jp}</div>
+                 <div class="pain-en">${s.en}</div>`;
+    d.addEventListener('click',()=>{
+      list.querySelectorAll('.pain-item').forEach(x=>x.classList.remove('is-active'));
+      d.classList.add('is-active');
+      player.src=s.a;
+      player.play();
+    });
+    list.appendChild(d);
+  });
+
+  open.addEventListener('click', show);
+  close.addEventListener('click', hide);
+  back.addEventListener('click', hide);
+
+  document.addEventListener('keydown',(e)=>{
+    if(e.key==='Escape') hide();
+  });
+});
+
 </script>
+
+<button class="fab-pain" id="painOpen">痛みがある場合</button>
+<div class="pain-backdrop" id="painBackdrop"></div>
+<div class="pain-sheet" id="painSheet" role="dialog" aria-modal="true" aria-label="pain during test injection">
+  <div class="pain-panel">
+    <div class="pain-title">テスト注入時に痛みがある場合 / If you feel pain during the test injection</div>
+    <div class="pain-list" id="painList"></div>
+
+    <div class="pain-audio">
+      <audio id="painPlayer" controls style="width:100%"></audio>
+    </div>
+
+    <div class="pain-footer">
+      <button class="pain-close" id="painClose" type="button">閉じる</button>
+      <div style="font-size:12px;color:#64748b;">タップで再生 / Tap to play</div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
