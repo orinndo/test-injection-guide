@@ -71,6 +71,7 @@ border-radius:20px;padding:12px 12px 14px;box-shadow:0 18px 40px rgba(15,23,42,.
 <button id="play">▶︎ 再生</button>
 <button id="pause">⏸ 一時停止</button>
 <button id="replay">↻ もう一度</button>
+<button id="goUrl">メニューへ戻る</button>
 </div>
 <div class="status" id="status">待機中 / Ready</div>
 <audio controls="" id="player"></audio>
@@ -118,6 +119,7 @@ document.getElementById('next').onclick=()=>load(idx+1);
 document.getElementById('play').onclick=()=>player.play();
 document.getElementById('pause').onclick=()=>player.pause();
 document.getElementById('replay').onclick=()=>{player.currentTime=0;player.play();}
+document.getElementById('goUrl').onclick=()=>{location.href="https://orinndo.github.io/Language-selection/en/";};
 player.onplay=()=>status.textContent="再生中 / Playing";
 player.onpause=()=>status.textContent="一時停止 / Paused";
 player.onended=()=>status.textContent="待機中 / Ready";
